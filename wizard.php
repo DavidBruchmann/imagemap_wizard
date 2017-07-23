@@ -1,8 +1,10 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *
  *  (c) 2008 Tolleiv Nietsch (info@tolleiv.de)
+ *  (c) 2017 David Bruchmann, Webdevelopment Barlian (david.bruchmann@gmail.com)
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -21,22 +23,24 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+
 /**
  *
  * @author	Tolleiv Nietsch <info@tolleiv.de>
  */
 
 define('TYPO3_MOD_PATH','../typo3conf/ext/imagemap_wizard/');
+
 $BACK_PATH = '../../../typo3/';
 require($BACK_PATH.'init.php');
-require($BACK_PATH.'template.php');
-
-require_once(t3lib_extMgm::extPath('imagemap_wizard').'classes/controller/class.tx_imagemapwizard_controller_wizard.php');
 
 $GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
-$GLOBALS['LANG']->includeLLFile('EXT:imagemap_wizard/locallang.xml');
+$GLOBALS['LANG']->includeLLFile('EXT:imagemap_wizard/Resources/Private/Language/locallang.xml');
 
-$SOBE = t3lib_div::makeInstance('tx_imagemapwizard_controller_wizard');
+$SOBE = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Barlian\\ImagemapWizard\\Controller\\TceFormUserElementController');
+# $SOBE = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Barlian\\ImagemapWizard\\Controller\\ImagemapWizardController');
+
 $SOBE->triggerAction();
 
 ?>
