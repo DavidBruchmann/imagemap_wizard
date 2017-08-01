@@ -50,12 +50,12 @@ class Typo3Env {
 		/* local includes otherwise XCLASSES might be lost due to extension load order */
 
 		$tca = $GLOBALS['TCA'];
-		$GLOBALS['TT'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TimeTracker\\TimeTracker');
+		$GLOBALS['TT'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TimeTracker\TimeTracker');
 		$GLOBALS['TT']->start();
 		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-			'TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController', $GLOBALS['TYPO3_CONF_VARS'], $pid, '0', 0, '', '', '', ''
+			'Barlian\ImagemapWizard\Controller\TypoScriptFrontendController', $GLOBALS['TYPO3_CONF_VARS'], $pid, '0', 0, '', '', '', ''
 		);
-		# \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Http\\RequestHandler');
+		# \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Frontend\Http\RequestHandler');
 
 		$GLOBALS['TSFE']->config['config']['language'] = $_GET['L'];
 		$GLOBALS['TSFE']->id = $pid;
@@ -68,7 +68,7 @@ class Typo3Env {
 		 // * Page functions, a lot of sql/pages-related functions
 		 // * It's important to set the right $where_hid_del in the object so that the functions operate properly
 		 // * @see \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::fetch_the_id()
-		$GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
+		$GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Frontend\Page\PageRepository');
 
 		//$GLOBALS['TSFE']->sys_page->init($GLOBALS['TSFE']->showHiddenPage);
 		$GLOBALS['TSFE']->sys_page->init(TRUE);
@@ -124,6 +124,9 @@ class Typo3Env {
 	/**
 	 * Stack variable to store environment-settings
 	 *
+	 * @see popEnv()
+	 * @see pushEnv()
+	 * @see setEnv()
 	 */
 	protected $envStack = array();
 
@@ -132,29 +135,10 @@ class Typo3Env {
 	 * and it really sucks that this is needed
 	 *
 	 * @see popEnv()
+	 * @see setEnv()
 	 */
 	public function pushEnv() {
 		array_push($this->envStack, array('workDir' => getcwd(), 'BE_USER' => $GLOBALS['BE_USER'], 'TCA' => $GLOBALS['TCA']));
-	}
-
-	/**
-	 * prepares Frontend-like-Rendering
-	 * and it really sucks that this is needed
-	 *
-	 * @see pushEnv()
-	 * @see popEnv()
-	 */
-	public function setEnv($backPath = '') {
-		if ($this->BE_USER == NULL) {
-			$this->initMyBE_USER();
-		}
-		if ($backPath && is_dir($backPath)) {
-			chdir($backPath);
-			$GLOBALS['BACK_PATH'] = $backPath;
-		}
-		//$this->BE_USER_GLOBAL = $GLOBALS['BE_USER'];
-		$GLOBALS['BE_USER'] = $this->BE_USER;
-		#return $GLOBALS['BACK_PATH'];
 	}
 
 	/**
@@ -183,6 +167,26 @@ class Typo3Env {
 	}
 
 	/**
+	 * prepares Frontend-like-Rendering
+	 * and it really sucks that this is needed
+	 *
+	 * @see pushEnv()
+	 * @see popEnv()
+	 */
+	public function setEnv($backPath = '') {
+		if ($this->BE_USER == NULL) {
+			$this->initMyBE_USER();
+		}
+		if ($backPath && is_dir($backPath)) {
+			chdir($backPath);
+			$GLOBALS['BACK_PATH'] = $backPath;
+		}
+		//$this->BE_USER_GLOBAL = $GLOBALS['BE_USER'];
+		$GLOBALS['BE_USER'] = $this->BE_USER;
+		#return $GLOBALS['BACK_PATH'];
+	}
+
+	/**
 	 * reset/clear enableColumns - used to enable preview of access-restricted
 	 * elements - use only with stored Env!!!!!
 	 */
@@ -202,7 +206,7 @@ class Typo3Env {
 	 *
 	 */
 	protected function initMyBE_USER() {
-		$this->BE_USER = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Authentication\\BackendUserAuthentication'); // New backend user object
+		$this->BE_USER = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Authentication\BackendUserAuthentication'); // New backend user object
 		$this->BE_USER->userTS_dontGetCached = 1;
 		$this->BE_USER->OS = TYPO3_OS;
 		$this->BE_USER->setBeUserByUid($GLOBALS['BE_USER']->user['uid']);
@@ -263,9 +267,6 @@ class Typo3Env {
 }
 
 
-#if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/classes/model/class.tx_imagemapwizard_model_typo3env.php']) {
-#	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/classes/model/class.tx_imagemapwizard_model_typo3env.php']);
-#}
-
-
-?>
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/Domain/Model/Typo3Env.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/Domain/Model/Typo3Env.php']);
+}

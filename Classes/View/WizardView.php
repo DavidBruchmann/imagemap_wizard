@@ -48,15 +48,19 @@ class WizardView extends \Barlian\ImagemapWizard\View\AbstractView {
 
 	protected $doc;
 
+	public function __construct(\TYPO3\CMS\Backend\Form\NodeFactory $nodeFactory, array $data=array()) {
+		parent::init();
+		$this->init();
+	}
+
 	/**
 	 * Just initialize the View, fill internal variables etc...
 	 */
 	public function init() {
-		parent::init();
-		$this->doc = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Template\\DocumentTemplate');
+		$this->doc = GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\DocumentTemplate');
 
 		// TODO: enter something logical or remove it:
-		$this->doc->backPath = $GLOBALS['BACK_PATH'];
+		#$this->doc->backPath = $GLOBALS['BACK_PATH'];
 
 		$this->doc->docType = 'xhtml_trans';
 		$this->doc->form = $this->getFormTag();
@@ -66,7 +70,7 @@ class WizardView extends \Barlian\ImagemapWizard\View\AbstractView {
 	 * Renders Content and prints it to the screen (or any active output buffer)
 	 */
 	public function renderContent() {
-		
+
 		# DebuggerUtility::var_dump(array('Language'=>$GLOBALS['LANG']));
 		$this->params = GeneralUtility::_GP('P');
 		// Setting field-change functions:
@@ -78,59 +82,16 @@ class WizardView extends \Barlian\ImagemapWizard\View\AbstractView {
 				$update .= 'parent.opener.' . $v;
 			}
 		}
-
-# Scripts may not close windows that were not opened by script.  index.php:81:6
-# Scripts may not close windows that were not opened by script.  index.php:138:5
-# http://localhost/_typo3/_PROJECTS/dgpt.de/2016/v7/typo3/index.php?
-#route=%2Frecord%2Fedit&
-#token=a2008adf19bb0d1c7a4022b9624409fb79ccf7ec&
-#edit[tt_content][1257]=edit&
-#returnUrl=%2F_typo3%2F_PROJECTS%2Fdgpt.de%2F2016%2Fv7%2Ftypo3%2Findex.php%3F
-#M%3Dweb_list%26
-#moduleToken%3D9a47be51c4c9e6253e96da1ed9219ed6f1fef770%26
-#id%3D5#
-
-/*
-function checkReference(){
-	if (parent.opener && parent.opener.document && parent.opener.document.edit && parent.opener.document.edit["' . $this->params['itemName'] . '"]) {
-		return parent.opener.document.edit["' . $this->params['itemName'] . '"];
-	} else {
-		close();
-	}
-}
-*/
-
-
-		$this->doc->JScode = $this->doc->wrapScriptTags('
-function checkReference(){
-	//console.log('.$this->params['formName'].');
-	if (parent.opener && parent.opener.document && parent.opener.document.' . $this->params['formName'] . ' && parent.opener.document.' . $this->params['formName'] . '["' . $this->params['itemName'] . '"]) {
-		return parent.opener.document.' . $this->params['formName'] . '["' . $this->params['itemName'] . '"];
-	} else {
-		close();
-	}
-}
-function setValue(input){
-	var field = checkReference();
-	if (field)	{
-		field.value = input;
-		' . $update . '
-	}
-}
-function getValue()	{	//
-	var field = checkReference();
-	return field.value;
-}
-');
-
+		// TODO:
+		// $this->doc->JScode = $this->doc->wrapScriptTags('');
 		$this->content .= $this->doc->startPage($GLOBALS['LANG']->getLL('imagemap_wizard.title'));
-
 		$mainContent    = $this->renderTemplate('wizard.php');
 		$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('imagemap_wizard.title'), $mainContent, 0, 1);
 		$this->content .= $this->doc->endPage();
+		// TODO:
 		$this->content  = $this->insertMyStylesAndJs($this->content);
-
-		echo $this->doc->insertStylesAndJS($this->content);
+		$this->content = $this->doc->insertStylesAndJS($this->content);
+		echo $this->content;
 	}
 
 	/**
@@ -140,9 +101,9 @@ function getValue()	{	//
 	 */
 	protected function insertMyStylesAndJs($content) {
 		// TODO: fix it!
+		$content = str_replace('<!--###POSTJSMARKER###-->', $this->getCssExtensionIncludes() . '<!--###POSTJSMARKER###-->', $content);
 		$content = str_replace('<!--###POSTJSMARKER###-->', $this->getJsExtensionIncludes()  . '<!--###POSTJSMARKER###-->', $content);
 		$content = str_replace('<!--###POSTJSMARKER###-->', $this->getInlineJSIncludes()    . '<!--###POSTJSMARKER###-->', $content);
-		$content = str_replace('<!--###POSTJSMARKER###-->', $this->getCssExtensionIncludes() . '<!--###POSTJSMARKER###-->', $content);
 		return $content;
 	}
 
@@ -172,10 +133,10 @@ function getValue()	{	//
 			$params['P[fieldChangeFunc][callback]'] = $updateCallback;
 		}
 		$link = BackendUtility::getModuleUrl('wizard_element_browser', $params);
-		return "<a href=\"#\" id=\"" . $linkId . "\" onclick=\"this.blur(); vHWin=window.open('" . $link . "','','height=600,width=500,status=0,menubar=0,scrollbars=1');vHWin.focus();return false;\">" . 
+		return "<a href=\"#\" id=\"" . $linkId . "\" onclick=\"this.blur(); vHWin=window.open('" . $link . "','','height=600,width=500,status=0,menubar=0,scrollbars=1');vHWin.focus();return false;\">" .
 				$this->getIcon(
 					'gfx/link_popup.gif',
-					'alt="' . $this->getLL('imagemap_wizard.form.area.linkwizard') . '" title="' . $this->getLL('imagemap_wizard.form.area.linkwizard') . '"') . 
+					'alt="' . $this->getLL('imagemap_wizard.form.area.linkwizard') . '" title="' . $this->getLL('imagemap_wizard.form.area.linkwizard') . '"') .
 			"</a>";
 	}
 
@@ -207,12 +168,10 @@ function getValue()	{	//
 		}
 		return implode(',', $ret);
 	}
+
 }
 
 
-#if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/classes/view/class.tx_imagemapwizard_view_wizard.php']) {
-#	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/classes/view/class.tx_imagemapwizard_view_wizard.php']);
-#}
-
-
-?>
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/View/WizardView.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/View/WizardView.php']);
+}

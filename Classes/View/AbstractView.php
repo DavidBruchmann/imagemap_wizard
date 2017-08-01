@@ -32,9 +32,9 @@ use \TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use \TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 $extensionClassesPath = ExtensionManagementUtility::extPath('imagemap_wizard') . 'Classes/';
-#require_once($extensionClassesPath . 'Domain/Model/Mapper.php');
-#use \Barlian\Domain\Model\Mapper;
-require_once($extensionClassesPath . 'Domain/Model/Typo3Env.php');
+# require_once($extensionClassesPath . 'Domain/Model/Mapper.php');
+use \Barlian\Domain\Model\Mapper;
+# require_once($extensionClassesPath . 'Domain/Model/Typo3Env.php');
 use \Barlian\Domain\Model\Typo3Env;
 
 
@@ -109,6 +109,16 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 	 * @var array
 	 */
 	protected $cssFiles = array();
+	
+	// TODO: explanation:
+	protected $additionalJavaScriptPost = array();
+	protected $additionalJavaScriptSubmit = array();
+	protected $additionalHiddenFields = array();
+	protected $additionalInlineLanguageLabelFiles = array();
+	protected $stylesheetFiles = array();
+	protected $requireJsModules = array();
+	protected $extJSCODE = '';
+	protected $inlineData = array();
 
 	protected static $icon2Sprite = array(
 		"gfx/button_up.gif" => 'actions-move-up',
@@ -127,6 +137,15 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 		"gfx/arrowdown.png" => 'actions-view-go-down',
 		"gfx/close_gray.gif" => 'actions-document-close',
 	);
+	
+#	protected $languageService;
+	
+#	// Declaration of Barlian\ImagemapWizard\View\AbstractView::__construct() must be compatible with
+#	// TYPO3\CMS\Backend\Form\NodeInterface::__construct(TYPO3\CMS\Backend\Form\NodeFactory $nodeFactory, array $data)
+#	public function __construct(){
+#		$this->languageService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Lang\LanguageService');
+#		$this->languageService->init($GLOBALS['BE_USER']->uc['lang']);
+#	}
 
 
 	/**
@@ -184,7 +203,8 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 		$ret = '';
 		if (is_array($this->cssExtensionFiles)) {
 			foreach ($this->cssExtensionFiles as $cssExtensionFile) {
-				$ret .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $backPath . $extPath . $cssExtensionFile . "\" />";
+				#$ret .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $backPath . $extPath . $cssExtensionFile . "\" />";
+				$ret .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $backPath . $extPath . $cssExtensionFile . "\" class=\"imagemapCssExtensionIncludes\" />";
 			}
 		}
 		return $ret;
@@ -203,7 +223,8 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 		$ret = '';
 		if (is_array($this->jsExtensionFiles)) {
 			foreach ($this->jsExtensionFiles as $jsExtensionFile) {
-				$ret .= "\n<script type=\"text/javascript\" src=\"" . $backPath . $extPath . $jsExtensionFile . "\"></script>";
+				#$ret .= "\n<script type=\"text/javascript\" src=\"" . $backPath . $extPath . $jsExtensionFile . "\"></script>";
+				$ret .= "\n<script type=\"text/javascript\" src=\"" . $backPath . $extPath . $jsExtensionFile . "\" class=\"imagemapJsExtensionIncludes\"></script>";
 			}
 		}
 		return $ret;
@@ -235,7 +256,8 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 	 * @return String Markup
 	 */
 	protected function getInlineCssIncludes() {
-		return trim($this->inlineCss) ? ('<style type="text/css">' . trim($this->inlineCss) . '</style>') : '';
+		#return trim($this->inlineCss) ? ('<style type="text/css">' . trim($this->inlineCss) . '</style>') : '';
+		return trim($this->inlineCss) ? ('<style type="text/css" id="imagemapInlineCssIncludes">' . trim($this->inlineCss) . '</style>') : '';
 	}
 
 	/**
@@ -253,7 +275,8 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 	 * @return String Markup
 	 */
 	protected function getInlineJSIncludes() {
-		return trim($this->inlineJs) ? ('<script type="text/javascript">' . trim($this->inlineJs) . '</script>') : '';
+		#return trim($this->inlineJs) ? ('<script type="text/javascript">' . trim($this->inlineJs) . '</script>') : '';
+		return trim($this->inlineJs) ? ('<script type="text/javascript" id="imagemapInlineJsIncludes">' . trim($this->inlineJs) . '</script>') : '';
 	}
 
 	/**
@@ -274,7 +297,8 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 		$ret = '';
 		if (is_array($this->cssFiles)) {
 			foreach ($this->cssFiles as $cssFile) {
-				$ret .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $cssFile . "\" />";
+				#$ret .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $cssFile . "\" />";
+				$ret .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $cssFile . "\"  id=\"imagemapCssIncludes\" />";
 			}
 		}
 		return $ret;
@@ -298,14 +322,254 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 		$ret = '';
 		if (is_array($this->jsFiles)) {
 			foreach ($this->jsFiles as $jsFile) {
-				$ret .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $jsFile . "\" />";
+				#$ret .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $jsFile . "\" />";
+				$ret .= "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"" . $jsFile . "\" id=\"imagemapJsIncludes\"  />";
 			}
 		}
 		return $ret;
 	}
 
+	protected function setAdditionalJavaScriptPost($scripts){
+		$this->additionalJavaScriptPost = array();
+		if(is_array($scripts)){
+			$this->additionalJavaScriptPost = $scripts;
+		} else {
+			$this->additionalJavaScriptPost[] = $scripts;
+		}
+	}
+
+	protected function addAdditionalJavaScriptPost($name, $script){
+		# DebuggerUtility::var_dump(array(__METHOD__,$name=>$script));
+		$this->additionalJavaScriptPost[$name] = $script;
+	}
+
+	protected function getAdditionalJavaScriptPost(){
+		return $this->additionalJavaScriptPost;
+	}
+
+	protected function removeAdditionalJavaScriptPostByVal($script){
+		foreach($this->additionalJavaScriptPost as $key => $value){
+			if($script === $value){
+				unset($this->additionalJavaScriptPost[$key]);
+			}
+		}
+	}
+
+	protected function removeAdditionalJavaScriptPostByKey($name){
+		foreach($this->additionalJavaScriptPost as $key => $value){
+			if($key === $name){
+				unset($this->additionalJavaScriptPost[$key]);
+			}
+		}
+	}
+
+	protected function setAdditionalJavaScriptSubmit($scripts){
+		$this->additionalJavaScriptSubmit = array();
+		if(is_array($scripts)){
+			$this->additionalJavaScriptSubmit = $scripts;
+		} else {
+			$this->additionalJavaScriptSubmit[] = $scripts;
+		}
+	}
+
+	protected function addAdditionalJavaScriptSubmit($script){
+		$this->additionalJavaScriptSubmit[] = $script;
+	}
+
+	protected function getAdditionalJavaScriptSubmit(){
+		return $this->additionalJavaScriptSubmit;
+	}
+
+	protected function removeAdditionalJavaScriptSubmitByVal($script){
+		foreach($this->additionalJavaScriptSubmit as $key => $value){
+			if($script === $value){
+				unset($this->additionalJavaScriptSubmit[$key]);
+			}
+		}
+	}
+
+	protected function removeAdditionalJavaScriptSubmitByKey($name){
+		foreach($this->additionalJavaScriptSubmit as $key => $value){
+			if($key === $name){
+				unset($this->additionalJavaScriptSubmit[$key]);
+			}
+		}
+	}
+
+	protected function setAdditionalHiddenFields($scripts){
+		$this->additionalHiddenFields = array();
+		if(is_array($scripts)){
+			$this->additionalHiddenFields = $scripts;
+		} else {
+			$this->additionalHiddenFields[] = $scripts;
+		}
+	}
+
+	protected function addAdditionalHiddenFields($script){
+		$this->additionalHiddenFields[] = $script;
+	}
+
+	protected function getAdditionalHiddenFields(){
+		return $this->additionalHiddenFields;
+	}
+
+	protected function removeAdditionalHiddenFieldsByVal($script){
+		foreach($this->additionalHiddenFields as $key => $value){
+			if($script === $value){
+				unset($this->additionalHiddenFields[$key]);
+			}
+		}
+	}
+
+	protected function removeAdditionalHiddenFieldsByKey($name){
+		foreach($this->additionalHiddenFields as $key => $value){
+			if($key === $name){
+				unset($this->additionalHiddenFields[$key]);
+			}
+		}
+	}
+
+	protected function setAdditionalInlineLanguageLabelFiles($scripts){
+		$this->additionalInlineLanguageLabelFiles = array();
+		if(is_array($scripts)){
+			$this->additionalInlineLanguageLabelFiles = $scripts;
+		} else {
+			$this->additionalInlineLanguageLabelFiles[] = $scripts;
+		}
+	}
+
+	protected function addAdditionalInlineLanguageLabelFiles($script){
+		$this->additionalInlineLanguageLabelFiles[] = $script;
+	}
+
+	protected function getAdditionalInlineLanguageLabelFiles(){
+		return $this->additionalInlineLanguageLabelFiles;
+	}
+
+	protected function removeAdditionalInlineLanguageLabelFilesByVal($script){
+		foreach($this->additionalInlineLanguageLabelFiles as $key => $value){
+			if($script === $value){
+				unset($this->additionalInlineLanguageLabelFiles[$key]);
+			}
+		}
+	}
+
+	protected function removeAdditionalInlineLanguageLabelFilesByKey($name){
+		foreach($this->additionalInlineLanguageLabelFiles as $key => $value){
+			if($key === $name){
+				unset($this->additionalInlineLanguageLabelFiles[$key]);
+			}
+		}
+	}
+
+	protected function setStylesheetFiles($scripts){
+		$this->stylesheetFiles = array();
+		if(is_array($scripts)){
+			$this->stylesheetFiles = $scripts;
+		} else {
+			$this->stylesheetFiles[] = $scripts;
+		}
+	}
+
+	protected function addStylesheetFiles($script){
+		$this->stylesheetFiles[] = $script;
+	}
+
+	protected function getStylesheetFiles(){
+		return $this->stylesheetFiles;
+	}
+
+	protected function removeStylesheetFilesByVal($script){
+		foreach($this->stylesheetFiles as $key => $value){
+			if($script === $value){
+				unset($this->stylesheetFiles[$key]);
+			}
+		}
+	}
+
+	protected function removeStylesheetFilesByKey($name){
+		foreach($this->stylesheetFiles as $key => $value){
+			if($key === $name){
+				unset($this->stylesheetFiles[$key]);
+			}
+		}
+	}
+
+	protected function setRequireJsModules($scripts){
+		$this->requireJsModules = array();
+		if(is_array($scripts)){
+			$this->requireJsModules = $scripts;
+		} else {
+			$this->requireJsModules[] = $scripts;
+		}
+	}
+
+	protected function addRequireJsModules($script){
+		$this->requireJsModules[] = $script;
+	}
+
+	protected function getRequireJsModules(){
+		return $this->requireJsModules;
+	}
+
+	protected function removeRequireJsModulesByVal($script){
+		foreach($this->requireJsModules as $key => $value){
+			if($script === $value){
+				unset($this->requireJsModules[$key]);
+			}
+		}
+	}
+
+	protected function removeRequireJsModulesByKey($name){
+		foreach($this->requireJsModules as $key => $value){
+			if($key === $name){
+				unset($this->requireJsModules[$key]);
+			}
+		}
+	}
+
+	protected function setExtJSCODE($script){
+		$this->extJSCODE = $script;
+	}
+
+	protected function getExtJSCODE(){
+		return $this->extJSCODE;
+	}
+
+	protected function setInlineData($datas){
+		$this->inlineData = array();
+		if(is_array($datas)){
+			$this->inlineData = $datas;
+		} else {
+			$this->inlineData[] = $datas;
+		}
+	}
+
+	protected function addInlineData($data){
+		$this->inlineData[] = $data;
+	}
+
+	protected function getInlineData(){
+		return $this->inlineData;
+	}
+
+	protected function removeInlineDataByVal($data){
+		foreach($this->inlineData as $key => $value){
+			if($data === $value){
+				unset($this->inlineData[$key]);
+			}
+		}
+	}
+
+	protected function removeInlineDataByKey($name){
+		foreach($this->inlineData as $key => $value){
+			if($key === $name){
+				unset($this->inlineData[$key]);
+			}
+		}
+	}
+
 	protected function renderTemplate($file) {
-		# DebuggerUtility::var_dump(array(__METHOD__,$file,$this->form));
 		ob_start();
 		require_once(ExtensionManagementUtility::extPath($this->extensionKey) . 'Resources/Private/Templates/' . $file);
 		$ret = ob_get_contents();
@@ -352,9 +616,6 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 }
 
 
-# if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/classes/view/class.tx_imagemapwizard_view_abstract.php']) {
-#	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/classes/view/class.tx_imagemapwizard_view_abstract.php']);
-# }
-
-
-?>
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/View/AbstractView.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/View/AbstractView.php']);
+}

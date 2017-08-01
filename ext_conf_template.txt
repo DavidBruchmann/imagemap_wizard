@@ -12,3 +12,7 @@ previewImageMaxWH = 200
 
 #cat=basic//10; type=string ; label = additonal attributes: attributes besides the alt-attribute for each area
 additionalAttributes = title
+
+#cat=basic//10; type=options[textmedia,image,textpic]; label = Default CType for images : Select the available CType that is used for images without the Imagemap Wizard. Since TYPO3-7.6 this is by default textmedia, while the CTypes image and textmedia are not anymore available by default (changing this value might make your existing data unavailable or unusable).
+defaultImageCtype = textmedia
+

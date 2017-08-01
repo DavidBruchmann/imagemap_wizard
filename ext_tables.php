@@ -17,7 +17,10 @@ $extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_E
 	),
 	'CType'
 );
+
+// @TODO but not here:
 # TypeError: parent.opener.imagemapwizard_valueChanged is not a function[Learn More]
+
 $tempColumns = array (
 	'tx_imagemapwizard_links' => array(
 		'label' => 'LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xml:tt_content.tx_imagemapwizard_links',
@@ -87,7 +90,8 @@ http://localhost/_typo3/_PROJECTS/dgpt.de/2016/v7/typo3/index.php?
 
 $imwizardConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['imagemap_wizard']);
 
-$GLOBALS['TCA']['tt_content']['types']['imagemap_wizard'] = $GLOBALS['TCA']['tt_content']['types']['image'];
+# @TODO: check against /Configuration/TCA/Overrides/tt_content
+# $GLOBALS['TCA']['tt_content']['types']['imagemap_wizard'] = $GLOBALS['TCA']['tt_content']['types']['image'];
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
 	'tt_content',
@@ -117,14 +121,12 @@ $GLOBALS['TCA']['tt_content']['types']['imagemap_wizard'] = $GLOBALS['TCA']['tt_
 	$GLOBALS['TBE_MODULES_EXT']['xMOD_db_new_content_el']['addElClasses']['Barlian\ImagemapWizard\Hook\WiziconHook'] =
 		$extPath.'Classes/Hook/WiziconHook.php';
 
-	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess']['tx_imagemapwizard'] =
-		'Barlian\ImagemapWizard\Hook\PageRendererHooks->FixBackPath';
-		//'EXT:'.$_EXTKEY.'/Classes/Hook/PageRendererHooks.php:&PageRendererHooks->FixBackPath';
+#	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess']['tx_imagemapwizard'] =
+#		'Barlian\ImagemapWizard\Hook\PageRendererHooks->FixBackPath';
+#		//'EXT:'.$_EXTKEY.'/Classes/Hook/PageRendererHooks.php:&PageRendererHooks->FixBackPath';
 
-	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-postProcess']['tx_imagemapwizard'] =
-		'Barlian\ImagemapWizard\Hook\PageRendererHooks->RestoreBackPath';
-		//'EXT:'.$_EXTKEY.'/Classes/Hook/PageRendererHooks.php:&PageRendererHooks->RestoreBackPath';
+#	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-postProcess']['tx_imagemapwizard'] =
+#		'Barlian\ImagemapWizard\Hook\PageRendererHooks->RestoreBackPath';
+#		//'EXT:'.$_EXTKEY.'/Classes/Hook/PageRendererHooks.php:&PageRendererHooks->RestoreBackPath';
 		
 #}
-
-?>

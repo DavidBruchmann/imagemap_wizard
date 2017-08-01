@@ -1,17 +1,23 @@
 <?php
-$this->addJsExtensionFile("Resources/Public/js/jquery-1.4.min.js");
-$this->addJsExtensionFile("Resources/Public/js/jquery-ui-1.7.2.custom.min.js");
-$this->addJsExtensionFile("Resources/Public/js/jquery.base64.js");
-$this->addJsExtensionFile("Resources/Public/js/wizard.all.js.ycomp.js");
-$this->addCSSExtensionFile("Resources/Public/css/default.css");
+
+$jQuery = ''; //'TYPO3.jQuery';
+
+$this->addJsExtensionFile('Resources/Public/js/'.($jQuery ? $jQuery.'.' : '').'jquery-1.4.min.js');
+$this->addJsExtensionFile('Resources/Public/js/'.($jQuery ? $jQuery.'.' : '').'jquery-ui-1.7.2.custom.min.js');
+$this->addJsExtensionFile('Resources/Public/js/'.($jQuery ? $jQuery.'.' : '').'jquery.base64.js');
+$this->addJsExtensionFile('Resources/Public/js/'.($jQuery ? $jQuery.'.' : '').'wizard.all.js.ycomp.js');
+$this->addCSSExtensionFile('Resources/Public/css/default.css');
 
 $existingFields = $this->data->listAreas("\tcanvasObject.addArea(new area##shape##Class(),'##coords##','##alt##','##link##','##color##',0,{##attributes##});\n");
 
-$this->addInlineJS('
+
+$jQuery = $jQuery ? $jQuery : 'jQuery';
+
+$jQueryCode = '
 var canvaseObject;
 var scaleFactor = 1;
 var defaultAttributeset = {'.$this->data->emptyAttributeSet().'};
-jQuery.noConflict();
+//jQuery.noConflict();
 jQuery(document).ready(function(){
     canvasObject = new canvasClass();
     canvasObject.init("canvas","picture","areaForms");
@@ -65,7 +71,28 @@ jQuery(document).ready(function(){
         jQuery("#magnify > .zin").show();
     });
 });
-');
+function checkReference(){
+	//console.log('.$this->params['formName'].');
+	if (parent.opener && parent.opener.document && parent.opener.document.' . $this->params['formName'] . ' && parent.opener.document.' . $this->params['formName'] . '["' . $this->params['itemName'] . '"]) {
+		return parent.opener.document.' . $this->params['formName'] . '["' . $this->params['itemName'] . '"];
+	} else {
+		close();
+	}
+}
+function setValue(input){
+	var field = checkReference();
+	if (field)	{
+		field.value = input;
+		' . $update . '
+	}
+}
+function getValue()	{
+	var field = checkReference();
+	return field.value;
+}
+';
+$jQueryCode = str_replace('jQuery', $jQuery, $jQueryCode);
+$this->addInlineJS($jQueryCode);
 
 $buttonImageType = 'gif';
 $buttons['zoomin']        = $this->getIcon('gfx/zoom_in.'.    $buttonImageType,                           ' alt="'.$this->getLL('imagemap_wizard.form.zoomin').            '" title="'.$this->getLL('imagemap_wizard.form.zoomin').            '" class="zin"');

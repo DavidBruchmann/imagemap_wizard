@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-07-28T19:20:11Z" product-name="imagemap_wizard">
+		<header/>
+		<body>
+			<trans-unit id="tx_imagemapwizard_links.description">
+				<source>txImagemapwizardLinks</source>
+			</trans-unit>
+			<trans-unit id=="tx_imagemapwizard_links.description">
+				<source>Configure imagemap setup for the uploaded image.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

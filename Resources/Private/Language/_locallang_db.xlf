@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-07-28T19:20:11Z" product-name="imagemap_wizard">
+		<header/>
+		<body>
+			<trans-unit id="tx_imagemapwizard_domain_model_imagemapwizard">
+				<source>Imagemap Wizard</source>
+			</trans-unit>
+			<trans-unit id="tx_imagemapwizard_domain_model_imagemapwizard.tx_imagemapwizard_links">
+				<source>Tx Imagemapwizard Links</source>
+			</trans-unit>
+			<trans-unit id="tt_content.tx_extbase_type.Tx_ImagemapWizard_ImagemapWizard">
+				<source>Imagemap Wizard ImagemapWizard</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

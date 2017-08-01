@@ -80,7 +80,7 @@ class DataObject {
 		$this->compatVersion_7_6      = GeneralUtility::compat_version('7.6');
 
         if (!in_array($table, array_keys($GLOBALS['TCA']))) {
-			var_dump(func_get_args());
+			# var_dump(func_get_args());
             throw new \Exception('table (' . $table . ') is not defined in TCA.');
         }
         $this->table = $table;
@@ -98,8 +98,8 @@ class DataObject {
 		// This makes the difference between row and liveRow:
 		BackendUtility::fixVersioningPid($table, $this->liveRow);
 		
-		$this->mapperObj = GeneralUtility::makeInstance('Barlian\\Domain\\Model\\Mapper');
-		$this->t3envObj  = GeneralUtility::makeInstance('Barlian\\Domain\\Model\\Typo3Env');
+		$this->mapperObj = GeneralUtility::makeInstance('Barlian\Domain\Model\Mapper');
+		$this->t3envObj  = GeneralUtility::makeInstance('Barlian\Domain\Model\Typo3Env');
 		
 		$this->map = $this->mapperObj->map2array($this->getFieldValue($this->mapField));
 
@@ -133,7 +133,7 @@ class DataObject {
         $data = $this->row[$dbField];
         if ($isFlex) {
 			$xml = GeneralUtility::xml2array($data);
-			$tools = GeneralUtility::makeInstance('t3lib_flexformtools');
+			$tools = GeneralUtility::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools'); //t3lib_flexformtools');
             $data = $tools->getArrayValueByPath($parts[3], $xml);
         }
 
@@ -170,7 +170,7 @@ class DataObject {
         if (!$row) return NULL;
         $identifier = $row['identifier'];
         $someFileIdentifier = $identifier;
-        $storageRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Resource\\StorageRepository');
+        $storageRepository = GeneralUtility::makeInstance('TYPO3\CMS\Core\Resource\StorageRepository');
         $storage = $storageRepository->findByUid(1);
         $file = $storage->getFile($someFileIdentifier);
         return $file->getPublicUrl();
@@ -185,7 +185,8 @@ class DataObject {
     public function getImageLocation($abs = FALSE) {
         $location = '';
         $imageField = $this->determineImageFieldName();
-        if ($this->compatVersion_6_0) {
+		// TODO: make it smarter
+        if ($this->compatVersion_6_0 || $this->compatVersion_7_0 || $this->compatVersion_8_0) {
             $location = $this->getFalFieldValue($imageField);
         } else {
             if ($this->isFlexField($imageField)) {
@@ -220,6 +221,7 @@ class DataObject {
         $conf = array('table' => $this->table, 'select.' => array('uidInList' => $this->getLiveUid(), 'pidInList' => $this->getLivePid()));
 
         if ($this->templaVoilaIsLoaded) {
+			// @TODO
             require_once($this->templaVoilaPath . 'pi1/class.tx_templavoila_pi1.php');
         }
         //render like in FE with WS-preview etc...
@@ -234,21 +236,41 @@ class DataObject {
         $this->t3envObj->resetEnableColumns('pages_language_overlay');
         $this->t3envObj->resetEnableColumns($this->table); // no fe_group, start/end, hidden restrictions needed :P
         $GLOBALS['TSFE']->cObj->LOAD_REGISTER(array('keepUsemapMarker' => '1'), 'LOAD_REGISTER');
+		// HOW THE IMAGE IS PRODUCED HERE???
         $result = $GLOBALS['TSFE']->cObj->CONTENT($conf);
         $this->t3envObj->popEnv();
 
         // extract the image
         $matches = array();
-        if (!preg_match('/(<img[^>]+usemap="#[^"]+"[^>]*\/?>)/', $result, $matches)) {
-            //TODO: consider to use the normal image as fallback here instead of showing an error-message
-            return 'No Image rendered from TSFE. :(<br/>Has the page some kind of special doktype or has it access-restrictions?<br/>There are lot\'s of things which can go wrong since normally nobody creates frontend-output in the backend ;)<br/>Error was:' . $this->t3envObj->get_lastError();
+		$regex_strict = '/(<img[^>]+usemap="[^"]+"[^>]*\/?>)/';
+		$regex_permissive = '/(<img[^>]+(usemap="[^"]+")?[^>]*\/?>)/';
+        if (!preg_match($regex_permissive, $result, $matches)) {
+            // @TODO: consider to use the normal image as fallback here instead of showing an error-message
+            return 'No Image rendered from TSFE. :(<br/>'.
+				'Has the page some kind of special doktype or has it access-restrictions?<br/>'.
+				'There are lot\'s of things which can go wrong since normally nobody creates frontend-output in the backend ;)<br/>'.
+				'Error was:' . $this->t3envObj->get_lastError();
         }
+		// @TODO: anything to fix in the path???
         $result = str_replace('src="', 'src="' . ($this->backPath), $matches[1]);
+/*
+DebuggerUtility::var_dump(array(
+	'__METHOD__'=>__METHOD__,
+	'$conf'=>$conf,
+	'$this->backPath'=>$this->backPath,
+	'$result'=>$result,
+	 '$GLOBALS[TSFE]->cObj'=> $GLOBALS['TSFE']->cObj,
+	 '$this->t3envObj' => $this->t3envObj,
+	 'backtrace'=>debug_backtrace()
+));
+*/
         return $result;
     }
 
     /**
      *  Renders a thumbnail with preconfiguraed dimensions
+	 *
+	 * @TODO: render thumbnail smaller
      *
      * @param $confKey
      * @param $defaultMaxWH
@@ -449,11 +471,12 @@ class DataObject {
 		}
         if ($this->isFlexField($this->mapField)) {
             $parts = explode(':', $this->mapField);
+			// @TODO
 			if(1==2){ // VERSION < 7.0
-				$tools = t3lib_div::makeInstance('t3lib_flexformtools');
+				$tools = t3lib_div::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools'); //t3lib_flexformtools');
 				$data = t3lib_div::xml2array($this->row[$parts[2]]);
 			} else {
-				$tools = GeneralUtility::makeInstance('t3lib_flexformtools');
+				$tools = GeneralUtility::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools'); //t3lib_flexformtools');
 				$data = GeneralUtility::xml2array($this->row[$parts[2]]);
 			}
             $tools->setArrayValueByPath($parts[3], $data, $value);
@@ -470,11 +493,12 @@ class DataObject {
     public function getCurrentData() {
         if ($this->isFlexField($this->mapField)) {
             $parts = explode(':', $this->mapField);
+			// @TODO
 			if(1==2){ // VERSION < 7.0
-				$tools = t3lib_div::makeInstance('t3lib_flexformtools');
+				$tools = t3lib_div::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools'); //t3lib_flexformtools');
 				$data = t3lib_div::xml2array($this->row[$parts[2]]);
 			} else {
-				$tools = GeneralUtility::makeInstance('t3lib_flexformtools');
+				$tools = GeneralUtility::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools'); //t3lib_flexformtools');
 				$data = GeneralUtility::xml2array($this->row[$parts[2]]);
 			}
             return $tools->getArrayValueByPath($parts[3], $data);
@@ -509,7 +533,7 @@ class DataObject {
         if ($subKey == NULL) {
             return $this->fieldConf;
         }
-		$tools = GeneralUtility::makeInstance('t3lib_flexformtools');
+		$tools = GeneralUtility::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools'); //t3lib_flexformtools');
 		return $tools->getArrayValueByPath($subKey, $this->fieldConf);
     }
 
@@ -531,13 +555,15 @@ class DataObject {
 	public function setBackPath($backPath){
 		$this->backPath = $backPath;
 	}
+	
+	// required?
+	public function getBackPath(){
+		return $this->backPath;
+	}
 
 }
 
 
-#if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/classes/model/class.tx_imagemapwizard_model_dataObject.php']) {
-#    include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/classes/model/class.tx_imagemapwizard_model_dataObject.php']);
-#}
-
-
-?>
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/Domain/Model/DataObject.php']) {
+    include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/Domain/Model/DataObject.php']);
+}

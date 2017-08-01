@@ -27,8 +27,8 @@ namespace Barlian\ImagemapWizard\Controller;
  ***************************************************************/
 
 $extensionClassesPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('imagemap_wizard') . 'Classes/';
-require_once($extensionClassesPath . 'Domain/Model/DataObject.php');
-require_once($extensionClassesPath . 'Utilities/WizardUtility.php');
+# require_once($extensionClassesPath . 'Domain/Model/DataObject.php');
+# require_once($extensionClassesPath . 'Utilities/WizardUtility.php');
 
 use \TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use \TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -40,37 +40,47 @@ use \Barlian\ImagemapWizard\Utilities\WizardUtility;
  *
  * @author	Tolleiv Nietsch <info@tolleiv.de>
  */
-class TceFormUserElementController extends \Barlian\ImagemapWizard\Controller\AbstractBaseController {
+class TceFormUserElementController extends \Barlian\ImagemapWizard\Controller\AbstractBaseController
+{
+	
+	protected $params = array();
+	
+	public $debug = FALSE;
 
 	/**
-	 * Generate the Form since this is directly called we have to repeat some initial steps
+	 * Generate the Form since this is directly called from TCA we have to repeat some initial steps
 	 *
-	 * @param	Object		PA
-	 * @param	Object		fobj
+	 * @param	Array		$PA   Environment, Parameters and Data
+	 * @param	\TYPO3\CMS\Backend\Form\Element\UserElement		The Form Object
 	 * @return	String		HTMLCode with form-field
 	 */
 	public function renderForm($PA, $fobj) { // t3lib_TCEforms $fobj
 		// TODO: is full namespace required here?
 		$this->WizardUtility = GeneralUtility::makeInstance('Barlian\ImagemapWizard\Utilities\WizardUtility');
-		
-	
+
 		$GLOBALS['BE_USER']->setAndSaveSessionData('imagemap_wizard.value', NULL);
-		#if($PA instanceof \TYPO3\CMS\Core\Http\ServerRequest){
-		#	$queryParams = $PA->getQueryParams();
-		#	$params = $queryParams['P'];
-		#} else {
-		#	$params = $PA;
-		#}
-		
+		$params = $this->initParams($PA);
+		$this->initContext('tceform');
+		$this->PA = $params;
+		$this->fobj = $fobj;
+		if($this->debug){
+			DebuggerUtility::var_dump(array(__METHOD__, '$this->params'=>$this->params, 't3lib_TCEForm' => $t3lib_TCEForm, 'debug_backtrace'=>debug_backtrace(), ));
+		}
+		return $this->triggerAction();
+	}
+
+	/**
+	 * Using the incoming params PA for assigning $this->params
+	 *
+	 * @param array $PA
+	 *
+	 * @return array $params
+	 */
+	protected function initParams($PA){
 		$params = $this->WizardUtility->getServerRequestParams($PA);
-		/*
-		DebuggerUtility::var_dump(array(
-			__METHOD__,
-			'$PA'=>$PA,
-			'$fobj'=>$fobj,
-			'$params'=>$params,
-		));
-		*/
+		if($this->debug){
+			DebuggerUtility::var_dump(array(__METHOD__, '$PA'=>$PA, '$fobj'=>$fobj, '$params'=>$params, ));
+		}
 		$this->params['table'] = $params['table'];
 		if ($GLOBALS['TCA'][ $params['table'] ]['columns'][ $params['field'] ]['config']['type'] == 'flex') {
 			$parts = array_slice(explode('][', $params['itemFormElName']), 3);
@@ -79,7 +89,6 @@ class TceFormUserElementController extends \Barlian\ImagemapWizard\Controller\Ab
 		} else {
 			$this->params['field'] = $params['field'];
 		}
-
 		$this->params['uid'] = isset($params['row']['uid']) ? $params['row']['uid'] : $params['uid'];
 		$this->params['pid'] = isset($params['row']['pid']) ? $params['row']['pid'] : $params['pid'];
 		// TODO: get pObj:
@@ -87,30 +96,19 @@ class TceFormUserElementController extends \Barlian\ImagemapWizard\Controller\Ab
 		$this->params['fieldConf'] = $params['fieldConf'];
 		// TODO: transfer itemFormElName somehow?
 		$this->params['itemFormElName'] = isset($params['itemFormElName']) ? $params['itemFormElName'] : NULL;
+		return $params;
+	}
 
-		$this->initContext('tceform');
-		$this->initView();
-		$this->PA = $params;
-		$this->fobj = $fobj;
-		/*
-		$extensionClassesPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('imagemap_wizard') . 'Classes/';
-		include($extensionClassesPath.'Controller/dump.v4.html.txt.php');
-		DebuggerUtility::var_dump(array(
-			__METHOD__,
-			'$PA'=>$PA,
-			'$fobj'=>$fobj,
-			'$this->params'=>$this->params,
-			't3lib_TCEForm' => $t3lib_TCEForm,
-			'debug_backtrace[0]'=>debug_backtrace()[0],
-			'debug_backtrace[1]'=>debug_backtrace()[1])
-		); //$params,$PA));
-		// called by button in BE this is TYPO3\CMS\Core\Http\Response without useful data
-		*/
-		return $this->triggerAction();
+	protected function initView() {
+		$nodeFactory = GeneralUtility::makeInstance('TYPO3\CMS\Backend\Form\NodeFactory');
+		$this->view = GeneralUtility::makeInstance('Barlian\ImagemapWizard\View\TceformView', $nodeFactory, array());
+		$this->view->init($this->context);
 	}
 
 	/**
+	 * Action to populate TCE-Form with Wizard-Data
 	 *
+	 * @return void
 	 */
 	protected function TceformAjaxAction() {
 		$this->params['table']          = GeneralUtility::_GP('table');
@@ -128,6 +126,8 @@ class TceFormUserElementController extends \Barlian\ImagemapWizard\Controller\Ab
 	/**
 	 * Form action just renders the TCEForm which opens the wizard
 	 * comes with a cool preview and Ajax functionality which updates the preview...
+	 *
+	 * @return string $content
 	 */
 	protected function TceformAction() {
 		try {
@@ -141,19 +141,26 @@ class TceFormUserElementController extends \Barlian\ImagemapWizard\Controller\Ab
 			// @todo make something smart if params are empty and object creation failed
 			DebuggerUtility::var_dump(array('ERROR in '.__METHOD__,$e));
 		}
-		// possible to get rid of this? :
-		# $dataObj->setBackPath('');
-		$dataObj->setFieldConf($this->params['fieldConf']);
-		$this->view->setData($dataObj);
+		$dataObj->setFieldConf( $this->params['fieldConf'] );
+		$this->view->setData( $dataObj );
+
+		// is this somehow right: ???
+		// what was the reason for this???
 		if(isset($this->PA)){
-			$this->view->setTCEForm($this->fobj);
+			$this->view->setTCEForm( $this->fobj );
 		} elseif(isset($this->params['pObj'])){
-			$this->view->setTCEForm($this->params['pObj']);
+			$this->view->setTCEForm( $this->params['pObj'] );
 		} else {
 			// ERROR // TODO
 		}
-		$this->view->setFormName($this->params['itemFormElName']);
-		$this->view->setWizardConf($this->params['fieldConf']['config']['wizards']);
+		$this->view->setFormName( $this->params['itemFormElName'] );
+		$this->view->setWizardConf( $this->params['fieldConf']['config']['wizards'] );
+		
+		#DebuggerUtility::var_dump($this);
+		
+		# $content = $this->view->renderContent();
+		$content = $this->view->render();
+		/*
 		if($this->debug){
 			DebuggerUtility::var_dump(array(
 				__METHOD__,
@@ -161,12 +168,17 @@ class TceFormUserElementController extends \Barlian\ImagemapWizard\Controller\Ab
 				'$this->params'=>$this->params,
 				'$this'=>$this,
 				'$dataObj'=>$dataObj,
-				'$this->view'=>$this->view
+				'$this->view'=>$this->view,
+				'$content' => $content
 			));
 		}
-		return $this->view->renderContent();
+		*/
+		return $content;
 	}
 
 }
 
-?>
+
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/Controller/TceFormUserElementController.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/Controller/TceFormUserElementController.php']);
+}

@@ -1,0 +1,107 @@
+{
+    "modules": [
+        {
+            "config": {
+                "position": [
+                    87,
+                    136
+                ]
+            },
+            "name": "New Model Object",
+            "value": {
+                "actionGroup": {
+                    "_default0_list": true,
+                    "_default1_show": true,
+                    "_default2_new_create": true,
+                    "_default3_edit_update": true,
+                    "_default4_delete": true,
+                    "customActions": [
+                        "addTtcontentArea",
+                        "showImagemapWizardPopupContent"
+                    ]
+                },
+                "name": "ImagemapWizard",
+                "objectsettings": {
+                    "addDeletedField": true,
+                    "addHiddenField": true,
+                    "addStarttimeEndtimeFields": true,
+                    "aggregateRoot": true,
+                    "categorizable": false,
+                    "description": "",
+                    "mapToTable": "tt_content",
+                    "parentClass": "",
+                    "sorting": true,
+                    "type": "Entity",
+                    "uid": "1149489563474"
+                },
+                "propertyGroup": {
+                    "properties": [
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "",
+                            "propertyIsExcludeField": true,
+                            "propertyIsRequired": false,
+                            "propertyName": "txImagemapwizardLinks",
+                            "propertyType": "Text",
+                            "uid": "920440176838"
+                        }
+                    ]
+                },
+                "relationGroup": {
+                    "relations": [
+
+                    ]
+                }
+            }
+        }
+    ],
+    "properties": {
+        "backendModules": [
+
+        ],
+        "description": "Provides an TYPO3 Wizard which enables interactive Imagemap-Creation - related to the TYPO3-Linkwizard.",
+        "emConf": {
+            "category": "plugin",
+            "custom_category": "",
+            "dependsOn": "typo3 => 7.6.0-7.6.99\n",
+            "disableLocalization": false,
+            "disableVersioning": false,
+            "skipGenerateDocumentationTemplate": false,
+            "sourceLanguage": "en",
+            "state": "beta",
+            "targetVersion": "7.6.0-7.6.99",
+            "version": "1.0.0"
+        },
+        "extensionKey": "imagemap_wizard",
+        "name": "Imagemap Wizard",
+        "originalExtensionKey": "imagemap_wizard",
+        "originalVendorName": "Barlian",
+        "persons": [
+            {
+                "company": "",
+                "email": "",
+                "name": "Tolleiv Nietsch",
+                "role": "Developer"
+            },
+            {
+                "company": "Webdevelopment Barlian",
+                "email": "david.bruchmann@gmail.com",
+                "name": "David Bruchmann",
+                "role": "Developer"
+            }
+        ],
+        "plugins": [
+
+        ],
+        "vendorName": "Barlian"
+    },
+    "wires": [
+
+    ],
+    "log": {
+        "last_modified": "2017-07-28 07:20",
+        "extension_builder_version": "7.6.18",
+        "be_user": " (19)"
+    }
+}

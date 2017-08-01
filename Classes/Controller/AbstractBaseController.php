@@ -102,17 +102,6 @@ abstract class AbstractBaseController {
 		$reqContext = $forceContext ? $forceContext : GeneralUtility::_GP('context');
 		$this->context = ($reqContext == 'tceform') ? 'tceform' : 'wizard';
 	}
-
-	protected function initView() {
-		$nodeFactory = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Form\\NodeFactory');
-
-		//	$this->context: [tceform | wizard]
-		$viewClass = 'Barlian\\ImagemapWizard\\View\\' .
-			($this->context=='tceform' ? 'TceformView' : 'WizardView');
-
-		$this->view = GeneralUtility::makeInstance($viewClass, $nodeFactory, array());
-		$this->view->init($this->context);
-	}
 	
 	protected function initRequest($PA, $fObj){
 		$this->WizardUtility = GeneralUtility::makeInstance('Barlian\ImagemapWizard\Utilities\WizardUtility');
@@ -153,4 +142,7 @@ abstract class AbstractBaseController {
 
 }
 
-?>
+
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/Controller/AbstractBaseController.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/imagemap_wizard/Classes/Controller/AbstractBaseController.php']);
+}
