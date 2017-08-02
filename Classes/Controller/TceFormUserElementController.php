@@ -66,7 +66,13 @@ class TceFormUserElementController extends \Barlian\ImagemapWizard\Controller\Ab
 		if($this->debug){
 			DebuggerUtility::var_dump(array(__METHOD__, '$this->params'=>$this->params, 't3lib_TCEForm' => $t3lib_TCEForm, 'debug_backtrace'=>debug_backtrace(), ));
 		}
-		return $this->triggerAction();
+		# return $this->triggerAction();
+		if($this->context=='ajax'){
+			// is "return" needed here?
+			return $this->TceformAjaxAction();
+		} else {
+			return $this->TceformAction();
+		}
 	}
 
 	/**

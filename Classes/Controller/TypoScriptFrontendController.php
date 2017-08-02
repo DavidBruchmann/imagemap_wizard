@@ -83,7 +83,7 @@ class TypoScriptFrontendController extends \TYPO3\CMS\Frontend\Controller\TypoSc
 		// }
 		$this->uniqueString = md5(microtime());
 		$this->csConvObj = GeneralUtility::makeInstance(CharsetConverter::class);
-		$this->initPageRenderer();
+		$tmpPageRenderer = $this->initPageRenderer();
 		// Call post processing function for constructor:
 		if (is_array($this->TYPO3_CONF_VARS['SC_OPTIONS']['tslib/class.tslib_fe.php']['tslib_fe-PostProc'])) {
 			$_params = ['pObj' => &$this];
@@ -101,13 +101,30 @@ class TypoScriptFrontendController extends \TYPO3\CMS\Frontend\Controller\TypoSc
      */
     protected function initPageRenderer()
     {
-        if($this->pageRenderer !== null) {
-            return;
-        }
-        $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-		if(TYPO3_MODE==='FE'){
-			$this->pageRenderer->setTemplateFile('EXT:frontend/Resources/Private/Templates/MainPage.html');
-			$this->pageRenderer->setBackPath('../');
+			#if($this->pageRenderer !== null) {
+			#	return;
+			#}
+		if(TYPO3_MODE==='BE'){
+			$this->tmpPageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+			$this->tmpPageRenderer->disableCompressJavascript();
+			$this->tmpPageRenderer->disableCompressCss();
+			$this->tmpPageRenderer->disableConcatenateFiles();
+			$this->tmpPageRenderer->disableConcatenateJavascript();
+			$this->tmpPageRenderer->disableConcatenateCss();
+			$this->tmpPageRenderer->disableRemoveLineBreaksFromTemplate();
+			$this->tmpPageRenderer->setBackPath('./');
+			/*
+			$this->pageRenderer->setRequireJsPath($path);
+			$this->pageRenderer->setExtJsPath($path);
+			$this->pageRenderer->setTemplateFile($file);
+			$this->pageRenderer->setBodyContent($content);
+			$this->pageRenderer->setBaseUrl($baseUrl);
+			$this->pageRenderer->etIconMimeType($iconMimeType);
+			$this->pageRenderer->
+			$this->pageRenderer->
+			*/
+			// $this->pageRenderer->setTemplateFile('EXT:frontend/Resources/Private/Templates/MainPage.html');
+			
 		}
     }
 
@@ -118,7 +135,8 @@ class TypoScriptFrontendController extends \TYPO3\CMS\Frontend\Controller\TypoSc
      */
     public function initLLvars()
     {
-        // Init languageDependencies list
+        /*
+		// Init languageDependencies list
         $this->languageDependencies = [];
         // Setting language key and split index:
         $this->lang = $this->config['config']['language'] ?: 'default';
@@ -126,7 +144,7 @@ class TypoScriptFrontendController extends \TYPO3\CMS\Frontend\Controller\TypoSc
 
         // Finding the requested language in this list based
         // on the $lang key being inputted to this function.
-        /** @var $locales Locales */
+        // @var $locales Locales
         $locales = GeneralUtility::makeInstance(Locales::class);
         $locales->initialize();
 
@@ -142,6 +160,7 @@ class TypoScriptFrontendController extends \TYPO3\CMS\Frontend\Controller\TypoSc
         $this->renderCharset = $this->csConvObj->parse_charset($this->config['config']['renderCharset'] ? $this->config['config']['renderCharset'] : 'utf-8');
         // Rendering charset of HTML page.
         $this->metaCharset = $this->csConvObj->parse_charset($this->config['config']['metaCharset'] ? $this->config['config']['metaCharset'] : $this->renderCharset);
+		*/
     }
 	
 }

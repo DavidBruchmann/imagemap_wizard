@@ -62,7 +62,7 @@ class TypoScriptParserController {
 		# \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($num);
 
 		if ($num == 0) {
-			$converter = GeneralUtility::makeInstance('Barlian\\Domain\\Model\\Mapper');
+			$converter = GeneralUtility::makeInstance('Barlian\Domain\Model\Mapper');
 			$mapname = $converter->createValidNameAttribute($mapname);
 			$map = $converter->generateMap(
 				$this->cObj,

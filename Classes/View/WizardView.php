@@ -90,7 +90,7 @@ class WizardView extends \Barlian\ImagemapWizard\View\AbstractView {
 		$this->content .= $this->doc->endPage();
 		// TODO:
 		$this->content  = $this->insertMyStylesAndJs($this->content);
-		$this->content = $this->doc->insertStylesAndJS($this->content);
+		$this->content  = $this->doc->insertStylesAndJS($this->content);
 		echo $this->content;
 	}
 
