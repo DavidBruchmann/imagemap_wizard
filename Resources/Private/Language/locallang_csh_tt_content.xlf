@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<xliff version="1.0">
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+	<!-- https://docs.typo3.org/typo3cms/CoreApiReference/Internationalization/Translation/Index.html -->
 	<file source-language="en" datatype="plaintext" original="messages" date="2017-07-28T19:20:11Z" product-name="imagemap_wizard">
 		<header/>
+<!--
+    <meta type="array">
+        <description>CSH for additional tt_content fields</description>
+        <type>CSH</type>
+        <csh_table>tt_content</csh_table>
+        <fileId>EXT:imagemap_wizard/Resources/Private/Language/locallang_csh_ttc.xml</fileId>
+        <labelContext type="array">
+            <languageKey index="tx_imagemapwizard_links.description"></languageKey>
+        </labelContext>
+    </meta>
+-->
 		<body>
 			<trans-unit id="tx_imagemapwizard_links.description">
-				<source>txImagemapwizardLinks</source>
-			</trans-unit>
-			<trans-unit id=="tx_imagemapwizard_links.description">
-				<source>Configure imagemap setup for the uploaded image.</source>
+				<!--<source>txImagemapwizardLinks</source>-->
+				<source>Configure imagemap setup for the image.</source>
 			</trans-unit>
 		</body>
 	</file>

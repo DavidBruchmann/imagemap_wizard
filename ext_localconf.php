@@ -5,23 +5,23 @@ $extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY)
 #require_once($extPath . 'Classes/Controller/TceFormUserElementController.php');
 #require_once($extPath . 'Classes/Controller/ImagemapWizardController.php');
 #require_once($extPath . 'Classes/Controller/TypoScriptParserController.php');
-	
+
 #if (TYPO3_MODE=='BE') {
-	
+
 	$imwizardConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['imagemap_wizard']);
 	$CType = 'textmedia';
 	$availableMediaCTypes = ['textmedia','image','textpic'];
 	if(isset($imwizardConf['defaultImageCtype']) && in_array($imwizardConf['defaultImageCtype'],$availableMediaCTypes)){
 		$CType = $imwizardConf['defaultImageCtype'];
 	}
-	
+
 	// HOOK:
-	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['softRefParser']['tx_imagemapwizard'] = 
+	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['softRefParser']['tx_imagemapwizard'] =
 		'EXT:'.$_EXTKEY.'/Classes/Hook/SoftRefParserObjHook.php:&SoftRefParserObjHook';
-	
+
 	# $GLOBALS['TBE_MODULES_EXT']['xMOD_db_new_content_el']['addElClasses']['tx_imagemapwizard_wizicon'] =
 	#	$extPath.'Classes/class.tx_imagemapwizard_wizicon.php';
-	
+
 	#tx_imagemapwizard_parser::applyImageMap
 	$typoscript = '
 		includeLibs.imagemap_wizard = EXT:imagemap_wizard/Classes/Controller/TypoScriptParserController.php
@@ -62,8 +62,8 @@ $extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY)
 	$pageTSConfig = '
 		mod.wizards.newContentElement.wizardItems.common.elements.imagemap {
 			icon = EXT:imagemap_wizard/Resources/Public/img/tt_content_imagemap_v2_24x24.gif
-			title = LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xml:imagemap.title
-			description = LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xml:imagemap.description
+			title = LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xlf:imagemap.title
+			description = LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xlf:imagemap.description
 			tt_content_defValues {
 				CType = imagemap_wizard
 			}
@@ -73,8 +73,8 @@ $extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY)
 	/*
 		templavoila.wizards.newContentElement.wizardItems.common.elements.imagemap {
 			icon = EXT:imagemap_wizard/Resources/Public/img/tt_content_imagemap.gif
-			title = LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xml:imagemap.title
-			description = LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xml:imagemap.description
+			title = LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xlf:imagemap.title
+			description = LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xlf:imagemap.description
 			tt_content_defValues {
 				CType = imagemap_wizard
 			}

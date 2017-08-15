@@ -53,7 +53,7 @@ class TceformView extends \Barlian\ImagemapWizard\View\AbstractView {
 	 * Just initialize the View, fill internal variables etc...
 	 */
 	public function init() {
-		
+
 	}
 
 	public function setWizardConf($wConf) {
@@ -72,7 +72,7 @@ class TceformView extends \Barlian\ImagemapWizard\View\AbstractView {
         }
         return $this->pageRenderer;
     }
-	
+
 	public function initPageRenderer($conf){
         $pageRenderer = $this->getPageRenderer();
 		# DebuggerUtility::var_dump(array('__METHOD__'=>__METHOD__,'$conf'=>$conf));
@@ -84,7 +84,7 @@ class TceformView extends \Barlian\ImagemapWizard\View\AbstractView {
         #$pageRenderer->addJsFile($lib);
 	}
 
-	
+
 	public function render() {
 		$resultArray = $this->initializeResultArray();
 
@@ -98,19 +98,19 @@ class TceformView extends \Barlian\ImagemapWizard\View\AbstractView {
 		$fieldWizardResult['requireJsModules'] = $this->getRequireJsModules();
 		$fieldWizardResult['extJSCODE'] = $this->getExtJSCODE();
 		$fieldWizardResult['inlineData'] = $this->getInlineData();
-		
+
 		# DebuggerUtility::var_dump(array($resultArray,$fieldWizardResult));
 		$resultArray = $this->mergeChildReturnIntoExistingResult($resultArray, $fieldWizardResult, false);
-		
+
 		$this->initPageRenderer($resultArray);
 		# DebuggerUtility::var_dump(array('$this->pageRenderer'=>$this->pageRenderer));
 		# DebuggerUtility::var_dump(array($resultArray,$fieldWizardResult));
-		
+
 		#$formResultCompiler = GeneralUtility::makeInstance(FormResultCompiler::class);
 		#$formResultCompiler->mergeResult($resultArray);
 		#$jsBottom = $formResultCompiler->printNeededJSFunctions();
 		#DebuggerUtility::var_dump($jsBottom);
-		
+
 		/*
 		$mainFieldHtml = [];
 		$mainFieldHtml[] = '<div class="form-control-wrap">';
@@ -144,13 +144,13 @@ class TceformView extends \Barlian\ImagemapWizard\View\AbstractView {
 		if (!$this->data->hasValidImageFile()) {
 			# DebuggerUtility::var_dump($this);
 			if($this->form){
-				$content = $GLOBALS['LANG']->sL('LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xml:form.no_image');
+				$content = $GLOBALS['LANG']->sL('LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xlf:form.no_image');
 			}
 		} else {
 			# DebuggerUtility::var_dump(array(__METHOD__,$this->form));
-			
+
 			$content = $this->renderTemplate('tceform.php');
-			
+
 			/*
 			# \TYPO3\CMS\Backend\Form\AbstractNode
 				return [
@@ -197,7 +197,7 @@ class TceformView extends \Barlian\ImagemapWizard\View\AbstractView {
 			$this->form->additionalCode_pre[] = $this->getJSIncludes();
 			$this->form->additionalCode_pre[] = $this->getJsExtensionIncludes();
 			$this->form->additionalCode_pre[] = $this->getInlineJSIncludes();
-			
+
 			#DebuggerUtility::var_dump(array(__METHOD__,$this));
 		}
 		return $content;

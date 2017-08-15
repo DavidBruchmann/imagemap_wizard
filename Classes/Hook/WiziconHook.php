@@ -86,8 +86,8 @@ class WiziconHook {
 	 */
 	function includeLocalLang() {
 		$extensionPath = ExtensionManagementUtility::extPath('imagemap_wizard');
-		$llFile = $extensionPath . 'Resources/Private/Language/locallang.xml';
-		$localizationParser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Localization\Parser\LocallangXmlParser');
+		$llFile = $extensionPath . 'Resources/Private/Language/locallang.xlf';
+		$localizationParser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Localization\Parser\XliffParser'); // LocallangXmlParser
 		$LOCAL_LANG = $localizationParser->getParsedData($llFile, $GLOBALS['LANG']->lang);
 		return $LOCAL_LANG;
 	}

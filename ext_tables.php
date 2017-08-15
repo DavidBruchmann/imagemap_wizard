@@ -4,14 +4,14 @@ $extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY)
 $extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY);
 
 #$GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = array(
-#    0 => 'LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xml:imagemap.title',
+#    0 => 'LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xlf:imagemap.title',
 #    1 => 'imagemap_wizard',
 #    2 => 'EXT:' . $_EXTKEY . '/Resources/Public/img/tt_content_image.gif',
 #);
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
 	array(
-		'LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xml:imagemap.title',
+		'LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xlf:imagemap.title',
 		$_EXTKEY,
 		'EXT:' . $_EXTKEY . '/Resources/Public/img/tt_content_imagemap_v2_24x24.gif'
 	),
@@ -23,7 +23,7 @@ $extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_E
 
 $tempColumns = array (
 	'tx_imagemapwizard_links' => array(
-		'label' => 'LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xml:tt_content.tx_imagemapwizard_links',
+		'label' => 'LLL:EXT:imagemap_wizard/Resources/Private/Language/locallang.xlf:tt_content.tx_imagemapwizard_links',
 		'config' => array (
 			'type' => 'user',
 			'userFunc' => 'Barlian\ImagemapWizard\Controller\TceFormUserElementController->renderForm',
@@ -78,7 +78,7 @@ http://localhost/_typo3/_PROJECTS/dgpt.de/2016/v7/typo3/index.php?
 			P[fieldChangeFunc][0]=imagemapwizard_valueChanged%28field%29%3B&
 			P[fieldChangeFuncHash]=2133ee975b6f32ef788022b18ec036af61477b06&P[currentValue]=&
 			P[currentSelectedValues]=
-	
+
 	http://localhost/_typo3/_PROJECTS/dgpt.de/2016/v7/typo3/index.php?route=%2
 		Fwizard%2Frecord%2Fbrowse&
 		token=5a958c669ee4f5c582511cb265bd9279cee5c5d7&
@@ -105,7 +105,7 @@ $imwizardConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['image
 	// CSH context sensitive help
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
 		'tt_content',
-		$extPath.'Resources/Private/Language/locallang_csh_ttc.xml'
+		$extPath.'Resources/Private/Language/locallang_csh_tt_content.xlf' //locallang_csh_ttc.xml'
 	);
 
 	$icons = array(
@@ -128,5 +128,5 @@ $imwizardConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['image
 #	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-postProcess']['tx_imagemapwizard'] =
 #		'Barlian\ImagemapWizard\Hook\PageRendererHooks->RestoreBackPath';
 #		//'EXT:'.$_EXTKEY.'/Classes/Hook/PageRendererHooks.php:&PageRendererHooks->RestoreBackPath';
-		
+
 #}

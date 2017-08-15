@@ -109,7 +109,7 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 	 * @var array
 	 */
 	protected $cssFiles = array();
-	
+
 	// TODO: explanation:
 	protected $additionalJavaScriptPost = array();
 	protected $additionalJavaScriptSubmit = array();
@@ -137,9 +137,9 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 		"gfx/arrowdown.png" => 'actions-view-go-down',
 		"gfx/close_gray.gif" => 'actions-document-close',
 	);
-	
+
 #	protected $languageService;
-	
+
 #	// Declaration of Barlian\ImagemapWizard\View\AbstractView::__construct() must be compatible with
 #	// TYPO3\CMS\Backend\Form\NodeInterface::__construct(TYPO3\CMS\Backend\Form\NodeFactory $nodeFactory, array $data)
 #	public function __construct(){
@@ -153,7 +153,7 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 	 */
 	public function init() {
 		$GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
-		$GLOBALS['LANG']->includeLLFile('EXT:imagemap_wizard/Resources/Private/Language/locallang.xml');
+		$GLOBALS['LANG']->includeLLFile('EXT:imagemap_wizard/Resources/Private/Language/locallang.xlf');
 		$this->id = "imagemap" . GeneralUtility::shortMD5(rand(1, 100000));
 		$this->extensionPath = ExtensionManagementUtility::extPath($this->extensionKey);
 	}
@@ -210,7 +210,7 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 		return $ret;
 	}
 
-	/** 
+	/**
 	 * Creating markup for External-Javascript-Resoucres $this->jsExtensionFiles
 	 * returns all existing css-files of the extension wrapped with script-tags, all as one string
 	 * Paths are prepended with the backpath and extension-path
@@ -305,7 +305,7 @@ class AbstractView extends \TYPO3\CMS\Backend\Form\Element\UserElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param String Filename
 	 */
 	protected function addJsFile($jsFile) {
